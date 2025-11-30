@@ -1,7 +1,6 @@
-// --- Пакет вашого нового проєкту ---
-package com.example.a2laba
+// [ВАЖЛИВО] Пакет тепер вказує на 3 лабу
+package com.example.a3laba
 
-// --- Всі імпорти ---
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,24 +28,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.a2laba.ui.theme._2labaTheme
+
+// [ВАЖЛИВО] Імпорт теми для 3 лаби (переконайся, що перейменував її в файлі Theme.kt)
+import com.example.a3laba.ui.theme._3labaTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // [ВАЖЛИВО] Вмикає режим на повний екран
-        // Контент буде "залазити" під годинник і нижню смужку навігації.
         enableEdgeToEdge()
-
         setContent {
-            _2labaTheme {
-                // [ВАЖЛИВО] Scaffold (Риштування)
-                // Це стандартний макет екрана. Він дає нам 'innerPadding'.
-                // 'innerPadding' - це точний розмір статус-бару, щоб ми не перекрили годинник текстом.
+            // Використовуємо тему 3-ї лаби
+            _3labaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
-                    // Викликаємо нашу функцію і передаємо їй ці безпечні відступи
+                    // [ВИПРАВЛЕНО] Тепер передаємо innerPadding правильно (без "paddingValues =")
                     TodoApp(
                         modifier = Modifier.padding(innerPadding)
                     )
@@ -57,94 +52,61 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-/**
- * Головна функція. 'modifier' передається згори, щоб врахувати відступи від країв екрана.
- */
 @Composable
 fun TodoApp(modifier: Modifier = Modifier) {
-
-    // --- [НОВЕ] РОБОТА ЗІ СТАНОМ (STATE) ---
-
-    // 1. Змінна для тексту.
-    // 'remember' - запам'ятовує значення, щоб воно не зникло, коли екран оновиться.
-    // 'mutableStateOf' - каже екрану: "Якщо я змінюсь, перемалюй поле вводу".
+    // 1. Змінна для тексту (Стан)
     var currentTaskText by remember { mutableStateOf("") }
 
-    // 2. Змінна для списку.
-    // Зберігає всі наші завдання. Спочатку список пустий.
+    // 2. Змінна для списку (Стан)
     var tasksList by remember { mutableStateOf(listOf<String>()) }
 
-    // --- [НОВЕ] ВЕРТИКАЛЬНИЙ МАКЕТ ---
-    // Column розставляє елементи один під одним (Зверху -> Вниз)
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp) // Додатковий відступ 16dp з усіх боків для краси
+            .padding(16.dp)
     ) {
-
-        // Просто заголовок
         Text(
-            text = "Введіть нове завдання:",
+            text = "Введіть нове завдання (Лаба 3):", // Трохи змінив текст, щоб видно було різницю
             style = MaterialTheme.typography.titleMedium
         )
 
-        // --- [НОВЕ] ГОРИЗОНТАЛЬНИЙ МАКЕТ ---
-        // Row розставляє елементи в рядок (Зліва -> Направо)
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween // Розтягує елементи по краях
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
-            // --- [НОВЕ] ПОЛЕ ВВОДУ ---
             OutlinedTextField(
-                value = currentTaskText, // [ВАЖЛИВО] Прив'язка: поле показує те, що в змінній
+                value = currentTaskText,
                 onValueChange = { newText ->
-                    // [ВАЖЛИВО] Оновлення: коли тиснеш клавішу, змінна оновлюється
                     currentTaskText = newText
                 },
-                label = { Text("Наприклад, 'купити молоко'") },
-                // weight(1f) змушує поле зайняти всю доступну ширину, залишивши місце лише для кнопки
+                label = { Text("Завдання...") },
                 modifier = Modifier.weight(1f)
             )
 
-            // --- [НОВЕ] КНОПКА ---
             Button(
                 onClick = {
-                    // Код, що виконується при натисканні:
-                    if (currentTaskText.isNotBlank()) { // 1. Перевірка: чи не пустий текст
-
-                        // 2. [ВАЖЛИВО] Додавання в список
-                        // Ми беремо старий список і додаємо до нього новий елемент.
-                        // Це змушує LazyColumn побачити зміни і перемалюватися.
+                    if (currentTaskText.isNotBlank()) {
                         tasksList = tasksList + currentTaskText
-
-                        // 3. Очищення поля вводу
                         currentTaskText = ""
                     }
                 },
-                modifier = Modifier.padding(start = 8.dp) // Відступ зліва від кнопки
+                modifier = Modifier.padding(start = 8.dp)
             ) {
                 Text("Додати")
             }
         }
 
-        // Просто пустий простір (відступ) висотою 24dp
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Список ваших справ:",
+            text = "Список справ:",
             style = MaterialTheme.typography.titleMedium
         )
 
-        // --- [НОВЕ] РОЗУМНИЙ СПИСОК (LazyColumn) ---
-        // Використовуємо його замість Column, бо він економить пам'ять.
-        // Він малює тільки ті елементи, які зараз видно на екрані телефону.
         LazyColumn(
             modifier = Modifier.fillMaxWidth()
         ) {
-            // items() - це як цикл 'for'. Він біжить по кожному елементу списку.
             items(tasksList) { task ->
-                // Для кожного завдання створюється текст
                 Text(
                     text = "• $task",
                     style = MaterialTheme.typography.bodyLarge,
@@ -155,12 +117,10 @@ fun TodoApp(modifier: Modifier = Modifier) {
     }
 }
 
-
-// Функція для попереднього перегляду в Android Studio (щоб не запускати емулятор)
 @Preview(showBackground = true)
 @Composable
 fun TodoAppPreview() {
-    _2labaTheme {
+    _3labaTheme {
         TodoApp()
     }
 }
