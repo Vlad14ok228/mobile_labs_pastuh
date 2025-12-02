@@ -5,11 +5,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.a2laba"
-    compileSdk = 36
+    namespace = "com.example.lab2"
+    compileSdk {
+        version = release(36)
+    }
 
     defaultConfig {
-        applicationId = "com.example.a2laba"
+        applicationId = "com.example.lab2"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -40,7 +42,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
