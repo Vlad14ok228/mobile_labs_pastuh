@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "274922266861",
+    "project_id": "lab7-8ffc1",
+    "storage_bucket": "lab7-8ffc1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:274922266861:android:f08cbe05c00436216dace4",
+        "android_client_info": {
+          "package_name": "com.vovan.lab7"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5bsDSc4wZiJsmMpJ65PrnsJ6VMGgANW4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
