@@ -53,11 +53,11 @@ fun SubjectDetailsScreen(route: SubjectDetailsRoute) {
                         Spacer(Modifier.height(8.dp))
                         Text("Статус: ${lab.status}")
                         Button(onClick = { expanded = !expanded }) {
-                            Text("Змінити статус")
+                            Text("Обрати статус")
                         }
 
                         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                            listOf("Не розпочато", "В процесі", "Відкладено", "Виконано").forEach { status ->
+                            listOf("Не розпочато", "В процесі", "Відкласти", "Готово").forEach { status ->
                                 DropdownMenuItem(
                                     text = { Text(status) },
                                     onClick = {

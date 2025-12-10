@@ -53,14 +53,14 @@ object DatabaseStorage {
 
         val subjects = listOf(
             SubjectEntity(title = "Проектування ІС"),
-            SubjectEntity(title = "бобер"),
-            SubjectEntity(title = "Комп’ютерні мережі")
+            SubjectEntity(title = "Embedded Systems"),
+            SubjectEntity(title = "DevOPS")
         )
 
         val labs = listOf(
-            SubjectLabEntity(subjectId = 1, title = "Лабораторна 1", description = "Інтеграли"),
-            SubjectLabEntity(subjectId = 2, title = "Лабораторна 2", description = "Room Database"),
-            SubjectLabEntity(subjectId = 3, title = "Лабораторна 1", description = "TCP-з’єднання")
+            SubjectLabEntity(subjectId = 1, title = "Лабораторна 1", description = "Налаштування протоколів"),
+            SubjectLabEntity(subjectId = 2, title = "Лабораторна 2", description = "Вивчення переривань ESP32"),
+            SubjectLabEntity(subjectId = 3, title = "Лабораторна 1", description = "Docker Compose Lab")
         )
 
         subjects.forEach { s ->
