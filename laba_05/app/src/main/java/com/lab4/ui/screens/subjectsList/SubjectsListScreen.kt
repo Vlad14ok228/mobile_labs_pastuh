@@ -15,23 +15,38 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SubjectsListScreen(
-    viewModel: SubjectsListViewModel = koinViewModel(), // отримуємо ViewModel через Koin
-    onDetailsScreen: (Int) -> Unit,
+    viewModel: SubjectsListViewModel = koinViewModel(), // 👈 ViewModel: Отримуємо об'єкт через Koin для доступу до даних
+    onDetailsScreen: (Int) -> Unit, // 👈 Лямбда-функція: Це КОМАНДА для навігації. Вона викликається при кліку.
 ) {
+    // --- ПІДПИСКА НА ДАНІ ---
+    // Ми "слухаємо" потік даних (Flow) із ViewModel.
+    // Коли дані предметів завантажуються з бази, collectAsState() оновлює 'subjectsListState'.
     val subjectsListState = viewModel.subjectListStateFlow.collectAsState()
 
-    LazyColumn(Modifier.fillMaxSize()) {
+    // --- МАКЕТ (LAYOUT) ---
+    LazyColumn(Modifier.fillMaxSize()) { // 👈 LazyColumn: Оптимізований список, який малює лише видимі елементи
+
+        // items: Цикл, який створює елемент для кожного предмета у списку
         items(subjectsListState.value) { subject ->
             Text(
-                text = subject.title,
+                text = subject.title, // 👈 Відображаємо назву предмета
                 fontSize = 24.sp,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
+                    // --- ЛОГІКА КЛІКУ ---
                     .clickable(
                         interactionSource = null,
                         indication = LocalIndication.current,
-                    ) { subject.id?.let { id -> onDetailsScreen(id) } }
+                    ) {
+                        // Коли користувач натискає:
+                        subject.id?.let { id ->
+                            // 1. Перевіряємо, чи є у предмета ID.
+                            // 2. Якщо ID є, викликаємо функцію навігації (onDetailsScreen)
+                            // 3. Передаємо ID, щоб NavGraph міг перейти на екран деталей і знати, який предмет відкрити.
+                            onDetailsScreen(id)
+                        }
+                    }
             )
         }
     }

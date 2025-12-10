@@ -14,25 +14,23 @@ import org.koin.dsl.module
  * - in the module{...} scope you can create different instances by functions single{}, factory{}, viewModel{}
  * - in the module{...} scope to get some other instance which was created in scope you can call get()
  */
-val appModule = module {
-    /**
-    single{ ...class() } - create single (singleton) instance of class
-    In this example is created single instance of Lab5Database database
-    - get<Context>() - function gets the context which is in Koin module by default
-     */
-    single<Lab4Database> {
-        Room.databaseBuilder(
-            get<Context>(),
+val appModule = module { // 👈 Блок визначення Koin-модуля: тут ми описуємо, як створювати об'єкти
+
+    single<Lab4Database> { // 👈 Команда 'single': Створює ОДИН (singleton) екземпляр класу на весь час роботи додатка
+        Room.databaseBuilder( // 👈 Створення об'єкта бази даних Room
+            get<Context>(), // 👈 get<Context>(): Koin автоматично надає Context, який потрібен для створення бази
             Lab4Database::class.java, "lab4Database"
         ).build()
     }
+    // ☝️ У результаті, ми маємо єдиний, доступний звідусіль об'єкт Lab4Database.
 
-    /**
-    viewModel{ ...viewModelClass() } - create ViewModel instance
-    - get<Lab5Database>() - function gets the instance of database which is created above
-
-     */
+    // --- Створення ViewModel ---
+    // ViewModel використовується для зберігання логіки та даних, які "переживають" зміну конфігурації екрана (наприклад, поворот).
 
     viewModel { SubjectsListViewModel(get()) }
+    // ☝️ Команда 'viewModel': Створює екземпляр SubjectsListViewModel, який буде жити стільки, скільки живе екран.
+    // get(): Koin автоматично знаходить і передає сюди об'єкт Lab4Database, який ми створили вище.
+
     viewModel { SubjectDetailsViewModel(get()) }
+    // ☝️ Створює екземпляр SubjectDetailsViewModel, також передаючи йому об'єкт Lab4Database.
 }

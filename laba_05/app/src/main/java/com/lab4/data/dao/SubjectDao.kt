@@ -12,16 +12,20 @@ import com.lab4.data.entity.SubjectEntity
  * - contains custom functions-mappers for management data in table
  */
 @Dao
-interface SubjectDao {
-    // function for fetching all subjects from table
-    @Query("SELECT * FROM subjects")
+interface SubjectDao { // 👈 Інтерфейс DAO (Data Access Object) для таблиці SubjectEntity
+
+    @Query("SELECT * FROM subjects") // 👈 SQL-запит: вибрати всі записи з таблиці 'subjects'
     suspend fun getAllSubjects(): List<SubjectEntity>
+    // ☝️ Функція асинхронно повертає повний список усіх предметів.
 
-    // function for fetching single Subject by id
     @Query("SELECT * FROM subjects WHERE id = :id")
+    // 👈 SQL-запит: знайти один предмет, ID якого збігається з параметром :id
     suspend fun getSubjectById(id: Int): SubjectEntity?
+    // ☝️ Повертає один об'єкт SubjectEntity або null, якщо не знайдено.
 
-    // function for adding new value Subject to table
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    // 👈 Анотація для додавання нових даних у таблицю.
+    // OnConflictStrategy.REPLACE: якщо предмет з таким ID вже існує, він буде замінений.
     suspend fun addSubject(subjectEntity: SubjectEntity)
+    // ☝️ Функція асинхронно додає новий предмет у базу даних.
 }

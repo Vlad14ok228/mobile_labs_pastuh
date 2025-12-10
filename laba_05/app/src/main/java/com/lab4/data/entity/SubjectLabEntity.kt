@@ -6,22 +6,29 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "subjectsLabs",
-    foreignKeys = [
+    tableName = "subjectsLabs", // 👈 Анотація @Entity: Позначає цей клас як ТАБЛИЦЮ (Сутність)
+    foreignKeys = [ // 👈 Секція для опису ЗОВНІШНІХ КЛЮЧІВ (зв'язків з іншими таблицями)
         ForeignKey(
-            entity = SubjectEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["subject_id"],
-            onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
+            entity = SubjectEntity::class, // 👈 entity: Це головна таблиця, на яку ми посилаємось (Предмети)
+            parentColumns = ["id"], // 👈 parentColumns: Стовпчик у головній таблиці (SubjectEntity.id)
+            childColumns = ["subject_id"], // 👈 childColumns: Стовпчик у цій таблиці (SubjectLabEntity.subject_id), який містить ID предмета
+            onUpdate = ForeignKey.CASCADE, // 👈 onUpdate: Якщо ID предмета в головній таблиці зміниться, змінити його і тут
+            onDelete = ForeignKey.CASCADE // 👈 onDelete: Якщо предмет буде видалено, автоматично видалити ВСІ пов'язані з ним лаби
         )
     ]
 )
 data class SubjectLabEntity(
+    // Це основний ключ, який унікально ідентифікує кожну лабу.
     @PrimaryKey(autoGenerate = true) val id: Int? = null,
+    // 👈 @PrimaryKey: Унікальний ідентифікатор лаби. autoGenerate = true: Room сам присвоює ID.
+
     @ColumnInfo(name = "subject_id") val subjectId: Int,
-    val title: String,
-    val description: String,
-    val comment: String? = null,
-    val status: String = "Не розпочато" // "В процесі", "Відкладено", "Виконано"
+    // 👈 @ColumnInfo: Додаткова анотація, яка явно вказує ім'я стовпчика в базі.
+    // subjectId: Це ЗОВНІШНІЙ КЛЮЧ, який зв'язує цю лабу з певним предметом.
+
+    val title: String, // 👈 Назва лабораторної роботи
+    val description: String, // 👈 Детальний опис
+    val comment: String? = null, // 👈 Поле для коментарів (може бути порожнім, тому String?)
+    val status: String = "Не розпочато" // 👈 Поле СТАНУ (це ключове поле завдання)
+    // Значення за замовчуванням ("Не розпочато") буде встановлене, якщо статус не вказано при створенні.
 )
