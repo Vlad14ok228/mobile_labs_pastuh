@@ -15,27 +15,60 @@ import com.lab4.data.db.DatabaseStorage
 import com.lab4.data.entity.SubjectEntity
 
 @Composable
-fun SubjectsListScreen(onDetailsScreen: (Int) -> Unit) {
-    val context = LocalContext.current
+fun SubjectsListScreen(
+    // Це функція зворотного виклику (callback).
+    // Ми викликаємо її, коли користувач натискає на предмет, щоб NavGraph знав, що треба переключити екран.
+    onDetailsScreen: (Int) -> Unit
+) {
+    // 1. Налаштування доступу до Бази Даних
+    val context = LocalContext.current // Отримуємо контекст Android (потрібен для доступу до системних ресурсів)
+
+    // Отримуємо екземпляр нашої бази даних (використовуючи Singleton, який ми створили в DatabaseStorage).
     val db = DatabaseStorage.getDatabase(context)
+
+    // 2. Стан (State) для збереження даних
+    // 'subjects' - це змінна, яка зберігає список предметів, завантажених з БД.
+    // 'remember' - не дає змінній зникнути при перемальовуванні екрана.
+    // 'mutableStateOf' - робить змінну "живою": як тільки ми запишемо сюди дані, екран оновиться сам.
     var subjects by remember { mutableStateOf<List<SubjectEntity>>(emptyList()) }
 
+    // 3. Завантаження даних (Асинхронно)
+    // LaunchedEffect(Unit) - це блок коду, який запускається лише ОДИН РАЗ при відкритті екрана.
     LaunchedEffect(Unit) {
+        // Ми звертаємося до DAO (subjectsDao) і виконуємо SQL-запит "SELECT * FROM subjects".
+        // Отриманий список записуємо в нашу змінну стану.
         subjects = db.subjectsDao.getAllSubjects()
     }
 
+    // 4. Відображення списку (UI)
+    // LazyColumn - це оптимізований список (аналог RecyclerView).
+    // Він створює елементи тільки тоді, коли вони з'являються на екрані.
     LazyColumn(Modifier.fillMaxSize()) {
+
+        // items() - це цикл, який проходить по кожному елементу зі списку 'subjects'.
         items(subjects) { subject ->
+
+            // Для кожного предмета створюємо текстове поле
             Text(
-                text = subject.title,
+                text = subject.title, // Беремо назву предмета з об'єкта Entity
                 fontSize = 24.sp,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+                    .fillMaxWidth() // Розтягуємо текст на всю ширину екрана
+                    .padding(16.dp) // Додаємо відступи для краси
+                    // --- ЛОГІКА КЛІКУ ---
                     .clickable(
                         interactionSource = null,
-                        indication = LocalIndication.current,
-                    ) { subject.id?.let { id -> onDetailsScreen(id) } }
+                        indication = LocalIndication.current, // Додає ефект натискання ("хвильку")
+                    ) {
+                        // Цей код виконується при натисканні на предмет:
+
+                        // Перевіряємо, чи ID не null (безпека Kotlin)
+                        subject.id?.let { id ->
+                            // Викликаємо функцію навігації і передаємо їй ID цього предмета.
+                            // Це сигнал для NavigationGraph: "Відкрий деталі для предмета №(id)"
+                            onDetailsScreen(id)
+                        }
+                    }
             )
         }
     }
