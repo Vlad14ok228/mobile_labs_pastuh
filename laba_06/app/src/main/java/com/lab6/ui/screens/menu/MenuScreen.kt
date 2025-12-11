@@ -16,15 +16,24 @@ import androidx.compose.ui.unit.sp
  * MenuScreen - just example of menu screen which leads to the WeatherScreen and WeatherForecastScreen
  */
 @Composable
-fun MenuScreen(onWeather: () -> Unit, onWeatherForecast: () -> Unit) {
-    Column(
+fun MenuScreen(
+    // 1. Аргументи (Функції зворотного виклику)
+    onWeather: () -> Unit, // 👈 Лямбда-функція: Команда, яка викликається, коли користувач хоче перейти на екран Поточної Погоди.
+    onWeatherForecast: () -> Unit // 👈 Лямбда-функція: Команда, яка викликається, коли користувач хоче перейти на екран Прогнозу.
+) {
+    // Екран не містить жодної логіки чи даних; він лише виконує команди навігації, які йому передають.
+
+    Column( // 👈 Column: Розміщує всі елементи (текст та кнопки) вертикально.
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+            .fillMaxSize() // Займає всю доступну область екрана
+            .padding(16.dp) // Додає відступи по краях
     ) {
+        // Заголовок екрана
         Text("Menu Screen", fontSize = 22.sp, modifier = Modifier.fillMaxWidth())
+
+        // 2. Кнопка "Поточна Погода"
         Button(
-            onClick = onWeather,
+            onClick = onWeather, // 👈 При натисканні викликається функція-команда onWeather, що ініціює перехід.
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 12.dp),
@@ -36,8 +45,10 @@ fun MenuScreen(onWeather: () -> Unit, onWeatherForecast: () -> Unit) {
                 modifier = Modifier.fillMaxWidth()
             )
         }
+
+        // 3. Кнопка "Прогноз Погоди"
         Button(
-            onClick = onWeatherForecast,
+            onClick = onWeatherForecast, // 👈 При натисканні викликається функція-команда onWeatherForecast.
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 12.dp)

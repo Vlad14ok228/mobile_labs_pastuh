@@ -18,22 +18,33 @@ import com.lab6.data.entity.WeatherMain
  * - is used on WeatherScreen and WeatherForecastScreen
  */
 @Composable
-fun WeatherMainCustomView(weatherMain: WeatherMain, modifier: Modifier = Modifier) {
-    Card(modifier = modifier.padding(16.dp)) {
-        Column(modifier = Modifier.padding(6.dp)) {
+fun WeatherMainCustomView(
+    weatherMain: WeatherMain, // 👈 Аргумент 1: Об'єкт даних, який ми маємо відобразити (температура, тиск, вологість).
+    modifier: Modifier = Modifier // 👈 Аргумент 2: Модифікатор дозволяє нам налаштовувати вигляд компонента ззовні (розмір, відступи).
+) {
+    Card(modifier = modifier.padding(16.dp)) { // 👈 Card: Контейнер, який візуально відділяє дані, додаючи тінь і округлені кути.
+
+        Column(modifier = Modifier.padding(6.dp)) { // 👈 Column: Розміщує всі текстові поля вертикально.
+
+            // --- Відображення Температури ---
             Text(
+                // Витягуємо значення з об'єкта weatherMain і форматуємо рядок.
                 "temperature: ${weatherMain.temp}",
                 fontSize = 16.sp,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth() // Розтягуємо на всю доступну ширину картки
             )
+
+            // --- Відображення "Відчувається як" ---
             Text(
                 "feels like: ${weatherMain.feels_like}",
                 fontSize = 16.sp,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp)
+                    .padding(top = 16.dp) // Додаємо верхній відступ від попереднього елемента
             )
+
+            // --- Відображення Вологості ---
             Text(
                 "humidity: ${weatherMain.humidity}",
                 fontSize = 16.sp,
@@ -41,6 +52,8 @@ fun WeatherMainCustomView(weatherMain: WeatherMain, modifier: Modifier = Modifie
                     .fillMaxWidth()
                     .padding(top = 16.dp)
             )
+
+            // --- Відображення Тиску ---
             Text(
                 "pressure: ${weatherMain.pressure}",
                 fontSize = 16.sp,
@@ -52,10 +65,13 @@ fun WeatherMainCustomView(weatherMain: WeatherMain, modifier: Modifier = Modifie
     }
 }
 
-@Preview
+// --- Preview ---
+
+@Preview // 👈 Анотація @Preview дозволяє бачити, як виглядає компонент у вікні дизайну Android Studio.
 @Composable
 private fun WeatherMainCustomViewPreview() {
     WeatherMainCustomView(
+        // Тут ми створюємо "фейкові" дані (мок-дані), щоб показати компонент.
         weatherMain = WeatherMain(
             temp = 322.0,
             feels_like = 321.0,
