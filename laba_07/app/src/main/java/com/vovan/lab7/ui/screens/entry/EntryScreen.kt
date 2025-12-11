@@ -22,39 +22,56 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun EntryScreen(onStartGame: (String) -> Unit) {
-    val topics = listOf("History", "Science", "Sport")
-    var customTopic by remember { mutableStateOf("") }
+    // 1. Аргумент (Callback)
+    // 👈 Лямбда-функція: Функція, яка викликається, коли користувач готовий почати гру.
+    // Вона приймає як параметр обрану або введену користувачем тему (String).
 
+    // --- 2. Дані та Стан ---
+    val topics = listOf("History", "Science", "Sport") // Фіксований список рекомендованих тем.
+    var customTopic by remember { mutableStateOf("") } // 👈 Стан: Зберігає текст, який користувач вводить у полі.
+    // 'remember' і 'mutableStateOf' гарантують, що введений текст збережеться і оновиться на екрані.
+
+    // --- 3. UI: Загальний Макет ---
     Scaffold(modifier = Modifier.fillMaxSize()) { padding ->
+        // Scaffold: Надає стандартну структуру (якщо б ми використовували TopBar, Snackbar тощо).
+
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally, // Центрує елементи по горизонталі.
+            verticalArrangement = Arrangement.Center, // Центрує елементи по вертикалі.
             modifier = Modifier.fillMaxSize().padding(padding)
         ) {
             Text("Choose a quiz topic:")
 
-            topics.forEach { topic ->
+            // --- 4. Список Карток (Фіксовані Теми) ---
+            topics.forEach { topic -> // Проходимо по фіксованому списку тем.
                 Card(
-                    onClick = { onStartGame(topic) },
+                    onClick = { onStartGame(topic) }, // 👈 При кліку викликаємо onStartGame, передаючи фіксовану тему.
                     modifier = Modifier.padding(8.dp).height(60.dp)
                 ) {
+                    // Box використовується для центрованого розташування тексту всередині картки.
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(topic)
+                        Text(topic) // Відображаємо назву фіксованої теми.
                     }
                 }
             }
 
+            // --- 5. Поле для Введення Власної Теми ---
             Text("Or enter your own topic:")
             TextField(
-                value = customTopic,
-                onValueChange = { customTopic = it },
+                value = customTopic, // Значення береться зі стану customTopic.
+                onValueChange = { customTopic = it }, // При введенні тексту оновлюємо стан customTopic.
                 placeholder = { Text("Enter topic...") }
             )
-            Button(onClick = { if (customTopic.isNotBlank()) onStartGame(customTopic) }) {
+
+            // 6. Кнопка "Почати"
+            Button(
+                onClick = {
+                    // Перевіряємо, чи в полі щось введено, перш ніж починати гру.
+                    if (customTopic.isNotBlank()) onStartGame(customTopic)
+                }
+            ) {
                 Text("Start Quiz")
             }
         }
     }
 }
-
-
