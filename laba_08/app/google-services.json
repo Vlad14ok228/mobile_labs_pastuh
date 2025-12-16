@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1025723720606",
+    "project_id": "lab8-7ec30",
+    "storage_bucket": "lab8-7ec30.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1025723720606:android:db55cd809abdf51ea66c8f",
+        "android_client_info": {
+          "package_name": "com.example.smartrecipeapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7XKu_CUF9cas8TbpQtBl0slyUNSbReg8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
