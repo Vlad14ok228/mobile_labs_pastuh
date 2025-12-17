@@ -1,7 +1,5 @@
-// 1. ПАКЕТ: Папка ui/screens
 package com.example.smartrecipeapp.ui.screens
 
-// 2. ІМПОРТИ: Нам потрібні класи для UI (Compose) та для системних сповіщень (Android)
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -27,28 +25,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.core.app.NotificationCompat
 import com.example.smartrecipeapp.R
 
-// 3. EКРАН НАЛАШТУВАНЬ:
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel) {
 
-    // 4. ПІДПИСКА НА ДАНІ (StateFlow):
-    // Екран "слухає" зміни у ViewModel.
-    // Як тільки ти натиснеш перемикач, ViewModel оновить змінну, і екран перемалюється (Recomposition).
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
     val areNotificationsEnabled by viewModel.areNotificationsEnabled.collectAsState()
-
-    // 5. CONTEXT (Контекст):
-    // У Compose немає прямого доступу до системних служб (як NotificationManager).
-    // LocalContext.current дає нам місток до системи Android.
     val context = LocalContext.current
+
+    // 👇 1. НОВЕ: Змінна для контролю діалогу
+    var showAuthorDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Заголовок
         Text(
             text = "Налаштування",
             fontSize = 28.sp,
@@ -58,18 +50,16 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
 
         SettingsSectionTitle("Загальні")
 
-        // 6. ПЕРЕМИКАЧ ТЕМИ:
         SettingsSwitchItem(
             icon = Icons.Default.Person,
             title = "Темна тема",
             subtitle = "Змінити оформлення додатку",
-            checked = isDarkTheme, // Стан беремо з VM
-            onCheckedChange = { viewModel.toggleTheme(it) } // Подію відправляємо в VM
+            checked = isDarkTheme,
+            onCheckedChange = { viewModel.toggleTheme(it) }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // 7. ПЕРЕМИКАЧ СПОВІЩЕНЬ:
         SettingsSwitchItem(
             icon = Icons.Default.Notifications,
             title = "Сповіщення",
@@ -78,12 +68,10 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             onCheckedChange = { viewModel.toggleNotifications(it) }
         )
 
-        // 8. УМОВНЕ ВІДОБРАЖЕННЯ (Conditional UI):
-        // Кнопка тесту з'являється ТІЛЬКИ якщо сповіщення увімкнені.
+        // Твоя логіка для кнопки сповіщень (залишилась без змін)
         if (areNotificationsEnabled) {
             Spacer(modifier = Modifier.height(8.dp))
             Button(
-                // При кліку викликаємо нашу функцію створення сповіщення
                 onClick = { showTestNotification(context) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
@@ -98,8 +86,9 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
 
         SettingsSectionTitle("Про додаток")
 
-        // Інформаційна картка (Статичний контент)
+        // 👇 2. ЗМІНЕНО: Додали onClick = { showAuthorDialog = true }
         Card(
+            onClick = { showAuthorDialog = true }, // Відкриваємо діалог
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
@@ -135,51 +124,61 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             }
         }
     }
+
+    // 👇 3. НОВЕ: Сам код діалогового вікна
+    if (showAuthorDialog) {
+        AlertDialog(
+            onDismissRequest = { showAuthorDialog = false },
+            icon = { Icon(Icons.Default.Info, contentDescription = null) },
+            title = { Text(text = "Smart Recipe App") },
+            text = {
+                Text(
+                    text = "Цей додаток розроблено в рамках лабораторної роботи №8 .\n\n" +
+                            "Технології: Kotlin, Jetpack Compose, Koin, Room, Retrofit, Gemini AI.\n\n" +
+                            "Розробник: Студент групи ІК-42"
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { showAuthorDialog = false }) {
+                    Text("Зрозуміло")
+                }
+            }
+        )
+    }
 }
 
-// 9. ФУНКЦІЯ СТВОРЕННЯ СПОВІЩЕННЯ:
-// Вона не @Composable, це звичайна Kotlin-функція.
-// Приймає Context, щоб мати доступ до NotificationManager.
+// 👇 Твої функції залишились без змін
+
 fun showTestNotification(context: Context) {
     val channelId = "recipe_channel"
-    val notificationId = 1 // ID сповіщення (якщо відправити з тим самим ID, воно оновиться)
+    val notificationId = 1
 
-    // Отримуємо системну службу керування сповіщеннями
     val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    // 10. NOTIFICATION CHANNEL (Канал сповіщень):
-    // Починаючи з Android 8.0 (Oreo), всі сповіщення мають бути прив'язані до каналу.
-    // Це дозволяє користувачу в налаштуваннях телефону вимкнути тільки "Нові рецепти", але залишити "Безпеку".
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val name = "Нові рецепти"
         val descriptionText = "Сповіщення про смачні страви"
-        val importance = NotificationManager.IMPORTANCE_HIGH // Високий пріоритет (звук + вібрація)
+        val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(channelId, name, importance).apply {
             description = descriptionText
         }
-        // Реєструємо канал у системі
         notificationManager.createNotificationChannel(channel)
     }
 
-    // 11. BUILDER (Будівельник):
-    // Створюємо зовнішній вигляд сповіщення.
     val builder = NotificationCompat.Builder(context, channelId)
-        .setSmallIcon(android.R.drawable.ic_menu_camera) // Маленька іконка в статус-барі
-        .setContentTitle("🍲 Новий рецепт!") // Заголовок
-        .setContentText("Шеф підібрав для вас щось смачненьке. Зайдіть переглянути!") // Текст
-        .setPriority(NotificationCompat.PRIORITY_HIGH) // Пріоритет для старих Android (< 8.0)
-        .setAutoCancel(true) // Сповіщення зникне, коли на нього натиснуть
+        .setSmallIcon(android.R.drawable.ic_menu_camera)
+        .setContentTitle("🍲 Новий рецепт!")
+        .setContentText("Шеф підібрав для вас щось смачненьке. Зайдіть переглянути!")
+        .setPriority(NotificationCompat.PRIORITY_HIGH)
+        .setAutoCancel(true)
 
-    // 12. ВІДПРАВКА:
     try {
         notificationManager.notify(notificationId, builder.build())
     } catch (e: SecurityException) {
-        // На Android 13+ треба динамічно просити дозвіл POST_NOTIFICATIONS.
-        // Тут ми просто ловимо помилку, щоб програма не впала.
+        // Handle exception
     }
 }
 
-// Допоміжні компоненти (щоб не дублювати код)
 @Composable
 fun SettingsSectionTitle(title: String) {
     Text(
@@ -219,7 +218,6 @@ fun SettingsSwitchItem(
                 Text(text = title, fontWeight = FontWeight.SemiBold)
                 Text(text = subtitle, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
             }
-            // Switch (Перемикач)
             Switch(
                 checked = checked,
                 onCheckedChange = onCheckedChange
